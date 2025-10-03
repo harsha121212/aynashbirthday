@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birthday Invite — Ayansh's 1st Birthday</title>
+<style>
+  :root{
+    --accent:#e91e63;
+    --muted:#5a646f;
+    --bg:#fff6f7;
+    --max-width:980px;
+    --hero-height:72vh;
+    font-family: "Georgia", "Times New Roman", serif;
+  }
+
+  html,body{height:100%; margin:0; background:var(--bg); color:#111;}
+  .wrap{max-width:var(--max-width); margin:0 auto; padding:18px;}
+  /* Hero */
+  .hero{
+    position:relative;
+    height:var(--hero-height);
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow: 0 6px 30px rgba(0,0,0,0.12);
+    background:linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.8));
+  }
+  /* slideshow images */
+  #introSlideshow{position:absolute; inset:0; display:block;}
+  .slideshow-img{
+    position:absolute; inset:0; background-size:cover; background-position:center;
+    opacity:0; transform:scale(1.03); transition:opacity .9s ease, transform .9s ease;
+    will-change:opacity,transform;
+  }
+  .slideshow-img.active{opacity:1; transform:scale(1);}
+  /* overlay text */
+  .hero-content{
+    position:relative; z-index:3; height:100%;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; padding:28px;
+    backdrop-filter: blur(4px) saturate(110%);
+  }
+  .quote{font-style:italic; color:rgba(255,255,255,0.95); text-shadow:0 3px 12px rgba(0,0,0,.35); margin-bottom:18px; font-size:1.05rem; max-width:86%;}
+  .title{font-size:2.1rem; letter-spacing:1px; color:var(--accent); margin:4px 0;}
+  .subtitle{font-family:Arial, sans-serif; color:var(--muted); letter-spacing:2px; text-transform:uppercase; font-size:.85rem; margin-bottom:10px;}
+  .cta-row{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; justify-content:center;}
+  .btn{
+    background:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer;
+    font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,.12);
+  }
+  .btn.primary{background:var(--accent); color:#fff;}
+  .controls{position:absolute; right:14px; top:14px; z-index:6; display:flex; gap:8px; align-items:center;}
+
+  /* Details card */
+  .details{
+    margin-top:18px; padding:18px; background:#fff; border-radius:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+  }
+  .event-line{font-size:1rem; color:var(--muted); margin:8px 0;}
+  .big{font-size:1.05rem; font-weight:700; color:var(--accent);}
+
+  /* RSVP modal / form */
+  .rsvp-modal{position:fixed; inset:0; display:none; z-index:50; align-items:center; justify-content:center;}
+  .rsvp-modal.show{display:flex;}
+  .rsvp-panel{background:#fff; padding:18px; border-radius:10px; width:min(420px,94%); box-shadow:0 10px 40px rgba(0,0,0,.2);}
+  .rsvp-panel h3{margin:0 0 10px 0;}
+  .form-row{display:flex; gap:8px; margin-bottom:10px;}
+  .form-row input, textarea{flex:1; padding:10px; border:1px solid #e6e6e6; border-radius:6px;}
+  .close-x{position:absolute; right:12px; top:12px; background:transparent; border:0; font-size:18px; cursor:pointer;}
+
+  /* small screen tweaks */
+  @media (max-width:600px){
+    .title{font-size:1.6rem;}
+    .quote{font-size:.95rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero" role="region" aria-label="Birthday invitation hero">
+    <div id="introSlideshow" aria-hidden="true">
+      <!-- Baby-themed images -->
+      <div class="slideshow-img active" style="background-image:url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1600&q=80&auto=format&fit=crop');"></div>
+      <div class="slideshow-img" style="background-image:url('https://images.unsplash.com/photo-1511895426328-dc8714191300?w=1600&q=80&auto=format&fit=crop');"></div>
+      <div class="slideshow-img" style="background-image:url('https://images.unsplash.com/photo-1502779283981-1d6872d4435c?w=1600&q=80&auto=format&fit=crop');"></div>
+    </div>
+
+    <div class="controls" aria-hidden="false">
+      <button id="musicToggle" class="btn" title="toggle music">Music: Off</button>
+      <button id="downloadBtn" class="btn" title="download card">Download card</button>
+    </div>
+
+    <div class="hero-content">
+      <div class="quote">"One little smile of yours can light up our whole world."</div>
+      <div class="subtitle">You're cordially invited</div>
+      <div class="title">Ayansh's 1st Birthday</div>
+      <div class="cta-row">
+        <button class="btn primary" id="rsvpBtn">RSVP</button>
+        <a class="btn" href="#details" role="button">More details</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="details" class="details" aria-label="Event details">
+    <div class="event-line big">Thursday, 10 October 2024 — 6:00 PM</div>
+    <div class="event-line">Venue: MIG Cricket Club, Bandra East, Mumbai</div>
+    <div class="event-line">Dress code: Casual party</div>
+    <p style="color:var(--muted); margin-top:10px">
+      Join us in celebrating this special milestone! There will be cake, games, and lots of fun. 
+      Kids-friendly event. Please RSVP so we can make proper arrangements.
+    </p>
+  </div>
+</div>
+
+<!-- RSVP modal -->
+<div id="rsvpModal" class="rsvp-modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="rsvp-panel">
+    <button class="close-x" id="closeRsvp">✕</button>
+    <h3>RSVP for Ayansh's Birthday</h3>
+    <div style="font-size:.9rem;color:var(--muted);margin-bottom:8px;">Please let us know if you can join the celebration</div>
+    <div class="form-row">
+      <input id="rname" placeholder="Your name" />
+    </div>
+    <div class="form-row">
+      <input id="rguest" placeholder="Number of people attending" type="number" min="0" />
+    </div>
+    <div class="form-row">
+      <textarea id="rmsg" rows="3" placeholder="Message (optional)"></textarea>
+    </div>
+    <div style="display:flex; gap:8px; justify-content:flex-end;">
+      <button class="btn" id="rCancel">Cancel</button>
+      <button class="btn primary" id="rSend">Send RSVP</button>
+    </div>
+  </div>
+</div>
+
+<!-- hidden audio -->
+<audio id="bgAudio" loop preload="auto">
+  <source src="https://cdn.pixabay.com/download/audio/2021/08/09/audio_3f6c1b2c0f.mp3?filename=happy-birthday-song-123069.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  // --- Slideshow ---
+  const slides = document.querySelectorAll("#introSlideshow .slideshow-img");
+  let currentSlide = 0;
+  function cycleSlides(){
+    if (!slides || slides.length === 0) return;
+    slides.forEach((s,i)=> s.classList.toggle('active', i===currentSlide));
+    currentSlide = (currentSlide + 1) % slides.length;
+  }
+  // start immediately and repeat
+  cycleSlides();
+  const slideInterval = setInterval(cycleSlides, 4000);
+
+  // --- Music toggle ---
+  const musicToggle = document.getElementById('musicToggle');
+  const bgAudio = document.getElementById('bgAudio');
+  let musicOn = false;
+  musicToggle.addEventListener('click', () => {
+    musicOn = !musicOn;
+    if (musicOn){ bgAudio.play().catch(()=>{}); musicToggle.textContent = 'Music: On'; }
+    else { bgAudio.pause(); musicToggle.textContent = 'Music: Off'; }
+  });
+
+  // --- Download card ---
+  const downloadBtn = document.getElementById('downloadBtn');
+  downloadBtn.addEventListener('click', async () => {
+    const content = `You're invited!\n\nEvent: Ayansh's 1st Birthday\nWhen: Thursday, 10 October 2024 — 6:00 PM\nVenue: MIG Cricket Club, Bandra East, Mumbai\nDress Code: Casual party\n\nPlease RSVP so we can arrange seating.\n\nSee you there!`;
+    const blob = new Blob([content], {type: 'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Ayansh_Birthday_Invite.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // --- RSVP modal logic ---
+  const rsvpBtn = document.getElementById('rsvpBtn');
+  const rsvpModal = document.getElementById('rsvpModal');
+  const closeRsvp = document.getElementById('closeRsvp');
+  const rCancel = document.getElementById('rCancel');
+  const rSend = document.getElementById('rSend');
+
+  function showRsvp(show){
+    rsvpModal.classList.toggle('show', show);
+    rsvpModal.setAttribute('aria-hidden', show ? 'false' : 'true');
+  }
+  rsvpBtn.addEventListener('click', ()=> showRsvp(true));
+  closeRsvp.addEventListener('click', ()=> showRsvp(false));
+  rCancel.addEventListener('click', ()=> showRsvp(false));
+  rsvpModal.addEventListener('click', (e) => { if (e.target === rsvpModal) showRsvp(false); });
+
+  rSend.addEventListener('click', () => {
+    const name = document.getElementById('rname').value.trim();
+    const guests = document.getElementById('rguest').value.trim();
+    const msg = document.getElementById('rmsg').value.trim();
+
+    if (!name){ alert('Please enter your name'); return; }
+
+    // Store RSVP in localStorage
+    const existing = JSON.parse(localStorage.getItem('ayansh_rsvps') || '[]');
+    existing.push({name, guests: guests || 1, msg, time: new Date().toISOString()});
+    localStorage.setItem('ayansh_rsvps', JSON.stringify(existing));
+
+    showRsvp(false);
+    alert('Thank you! Your RSVP has been recorded. We look forward to celebrating with you!');
+    
+    // Clear form
+    document.getElementById('rname').value = '';
+    document.getElementById('rguest').value = '';
+    document.getElementById('rmsg').value = '';
+  });
+
+  // Optional: expose a simple console read of RSVPs for host
+  window.listRsvps = () => JSON.parse(localStorage.getItem('ayansh_rsvps')||'[]');
+</script>
+
+</body>
+</html>
