@@ -1,225 +1,536 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Birthday Invite — Ayansh's 1st Birthday</title>
-<style>
-  :root{
-    --accent:#e91e63;
-    --muted:#5a646f;
-    --bg:#fff6f7;
-    --max-width:980px;
-    --hero-height:72vh;
-    font-family: "Georgia", "Times New Roman", serif;
-  }
+    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Alice&family=Noto+Serif&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ayansh — 1st Birthday Invitation</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-soft: #fce4ec;
+            --ink: #1f2937;
+        }
 
-  html,body{height:100%; margin:0; background:var(--bg); color:#111;}
-  .wrap{max-width:var(--max-width); margin:0 auto; padding:18px;}
-  /* Hero */
-  .hero{
-    position:relative;
-    height:var(--hero-height);
-    border-radius:16px;
-    overflow:hidden;
-    box-shadow: 0 6px 30px rgba(0,0,0,0.12);
-    background:linear-gradient(180deg, rgba(255,255,255,0.65), rgba(255,255,255,0.8));
-  }
-  /* slideshow images */
-  #introSlideshow{position:absolute; inset:0; display:block;}
-  .slideshow-img{
-    position:absolute; inset:0; background-size:cover; background-position:center;
-    opacity:0; transform:scale(1.03); transition:opacity .9s ease, transform .9s ease;
-    will-change:opacity,transform;
-  }
-  .slideshow-img.active{opacity:1; transform:scale(1);}
-  /* overlay text */
-  .hero-content{
-    position:relative; z-index:3; height:100%;
-    display:flex; flex-direction:column; justify-content:center; align-items:center;
-    text-align:center; padding:28px;
-    backdrop-filter: blur(4px) saturate(110%);
-  }
-  .quote{font-style:italic; color:rgba(255,255,255,0.95); text-shadow:0 3px 12px rgba(0,0,0,.35); margin-bottom:18px; font-size:1.05rem; max-width:86%;}
-  .title{font-size:2.1rem; letter-spacing:1px; color:var(--accent); margin:4px 0;}
-  .subtitle{font-family:Arial, sans-serif; color:var(--muted); letter-spacing:2px; text-transform:uppercase; font-size:.85rem; margin-bottom:10px;}
-  .cta-row{display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; justify-content:center;}
-  .btn{
-    background:#fff; border:0; padding:10px 14px; border-radius:8px; cursor:pointer;
-    font-weight:600; box-shadow:0 4px 16px rgba(0,0,0,.12);
-  }
-  .btn.primary{background:var(--accent); color:#fff;}
-  .controls{position:absolute; right:14px; top:14px; z-index:6; display:flex; gap:8px; align-items:center;}
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            margin: 0;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            color: var(--ink);
+        }
 
-  /* Details card */
-  .details{
-    margin-top:18px; padding:18px; background:#fff; border-radius:12px;
-    box-shadow:0 6px 18px rgba(0,0,0,.06);
-  }
-  .event-line{font-size:1rem; color:var(--muted); margin:8px 0;}
-  .big{font-size:1.05rem; font-weight:700; color:var(--accent);}
+        /* Background */
+        .hero-bg {
+            position: fixed;
+            inset: 0;
+            z-index: -5;
+            background: linear-gradient(135deg, #e91e63, #f8bbd9);
+            filter: brightness(.9) saturate(1.05);
+        }
 
-  /* RSVP modal / form */
-  .rsvp-modal{position:fixed; inset:0; display:none; z-index:50; align-items:center; justify-content:center;}
-  .rsvp-modal.show{display:flex;}
-  .rsvp-panel{background:#fff; padding:18px; border-radius:10px; width:min(420px,94%); box-shadow:0 10px 40px rgba(0,0,0,.2);}
-  .rsvp-panel h3{margin:0 0 10px 0;}
-  .form-row{display:flex; gap:8px; margin-bottom:10px;}
-  .form-row input, textarea{flex:1; padding:10px; border:1px solid #e6e6e6; border-radius:6px;}
-  .close-x{position:absolute; right:12px; top:12px; background:transparent; border:0; font-size:18px; cursor:pointer;}
+        .overlay {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: radial-gradient(80% 70% at 50% 15%, rgba(233, 30, 99, .10), transparent 90%),
+                        linear-gradient(180deg, rgba(20, 6, 10, .2), rgba(20, 6, 10, .35));
+        }
 
-  /* small screen tweaks */
-  @media (max-width:600px){
-    .title{font-size:1.6rem;}
-    .quote{font-size:.95rem;}
-  }
-</style>
+        /* Music control */
+        .music-control {
+            position: fixed;
+            top: .75rem;
+            right: .75rem;
+            z-index: 100;
+            background: rgba(255, 255, 255, .4);
+            border: none;
+            border-radius: .5rem;
+            padding: .15rem .3rem;
+            font-size: 0.6rem;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary);
+            box-shadow: 0 3px 8px rgba(0, 0, 0, .15);
+            transition: background 0.3s ease;
+        }
+
+        .music-control:hover {
+            background: rgba(255, 255, 255, .9);
+        }
+
+        /* Intro screen */
+        #touchIntro {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: #fff;
+            text-align: center;
+            padding: 2rem;
+            transition: opacity .6s ease, visibility .6s ease;
+        }
+
+        #touchIntro.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .name-text {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(42px, 12vw, 96px);
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), 0 0 18px rgba(0, 0, 0, 0.25);
+            opacity: 0;
+            transform: translateY(16px);
+            animation: fadeUp 1s ease forwards;
+        }
+
+        .balloon-btn {
+            position: relative;
+            width: clamp(160px, 35vw, 260px);
+            height: clamp(160px, 35vw, 260px);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            z-index: 70;
+            opacity: 1;
+            animation: fadeUp 1s ease forwards;
+            animation-delay: 0.35s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .balloon-btn:hover {
+            transform: translateY(-3px) scale(1.02);
+        }
+
+        .balloon-svg-wrapper {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .balloon-svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.55));
+        }
+
+        #namesWrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+        .balloon-btn .touch-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: clamp(20px, 3vw, 32px);
+            font-weight: 700;
+            color: white;
+            z-index: 2;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.3;
+            white-space: pre-line;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: none; }
+        }
+
+        /* Main content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .main-content.visible {
+            opacity: 1;
+        }
+
+        .birthday-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, .95), rgba(252, 228, 236, .9));
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 640px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, .3), 0 0 0 1px rgba(255, 255, 255, .2);
+            border: 1px solid rgba(233, 30, 99, .1);
+        }
+
+        .invitation-header {
+            font-family: "Alex Brush", cursive;
+            font-size: 2.5rem;
+            font-weight: 400;
+            font-style: italic;
+            margin: 0 0 2rem 0;
+            text-align: center;
+            letter-spacing: .15em;
+            line-height: 0.7;
+        }
+
+        .baby-name {
+            font-family: "Alice", serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1rem 0;
+            text-transform: uppercase;
+        }
+
+        .highlight-line {
+            font-family: "Alex Brush", cursive;
+            font-size: 2.7rem;
+            font-weight: 400;
+            margin: 1.5rem 0;
+            letter-spacing: 0.35em;
+            line-height: 1.05;
+            text-align: center;
+        }
+
+        /* Event Details */
+        .event-details {
+            font-family: "Alice", serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-top: 2rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .event-row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 0.5rem 1rem;
+            margin: 0.6rem 0;
+            align-items: start;
+        }
+
+        .event-label {
+            font-weight: bold;
+            color: var(--primary);
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .event-value {
+            text-align: left;
+            word-break: break-word;
+        }
+
+        .map-link {
+            color: var(--primary);
+            font-style: italic;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .map-link:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            margin: 2rem 0 1.25rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 28px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            filter: brightness(.95);
+        }
+
+        .theme-note {
+            margin-top: 1rem;
+            padding: .9rem;
+            border-radius: 12px;
+            background: rgba(233, 30, 99, .1);
+            color: var(--primary);
+            font-style: italic;
+        }
+
+        .countdown-section {
+            margin-top: 1rem;
+            padding: .9rem;
+            border-radius: 12px;
+            color: var(--primary);
+            font-style: italic;
+        }
+
+        .countdown-timer {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: .9rem;
+            border-radius: 12px;
+            background: rgba(233, 30, 99, .1);
+            color: var(--primary);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .footer {
+            text-align: center;
+            color: rgba(255, 255, 255, .85);
+            padding: 2rem;
+        }
+
+        /* Mobile tweaks */
+        @media (max-width: 640px) {
+            .event-row {
+                grid-template-columns: 100px 1fr;
+                gap: 0.25rem 0.75rem;
+            }
+            
+            .birthday-card {
+                padding: 2rem 1.25rem;
+                margin: 0 1rem;
+            }
+        }
+    </style>
 </head>
+
 <body>
+    <div class="hero-bg"></div>
+    <div class="overlay"></div>
 
-<div class="wrap">
-  <div class="hero" role="region" aria-label="Birthday invitation hero">
-    <div id="introSlideshow" aria-hidden="true">
-      <!-- Your personal family photos - CORRECTED FILE NAMES -->
-      <div class="slideshow-img active" style="background-image:url('ChatGPT%20Image%20Oct%204,%202025,%2001_47_52%20AM.png')"></div>
-      <div class="slideshow-img" style="background-image:url('ChatGPT%20Image%20Oct%204,%202025,%2002_08_24%20AM.png')"></div>
-      <div class="slideshow-img" style="background-image:url('ChatGPT%20Image%20Oct%204,%202025,%2002_30_18%20AM.png')"></div>
-      <div class="slideshow-img" style="background-image:url('ChatGPT%20Image%20Oct%204,%202025,%2002_34_55%20AM.png')"></div>
-      <div class="slideshow-img" style="background-image:url('ChatGPT%20Image%20Oct%204,%202025,%2002_39_41%20AM.png')"></div>
+    <!-- Music -->
+    <button class="music-control" id="musicControl" type="button" aria-pressed="false">Music: Off</button>
+    <audio id="bgm" preload="auto" playsinline loop>
+        <source src="happy-birthday-334876.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Intro screen -->
+    <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
+        <div id="namesWrap">
+            <div class="name-text">AYANSH'S</div>
+            <button id="balloonButton" class="balloon-btn" type="button" aria-label="Begin">
+                <div class="balloon-svg-wrapper">
+                    <svg class="balloon-svg" viewBox="0 0 100 100" aria-hidden="true">
+                        <path d="M50,15 C60,5 80,5 90,15 C100,25 100,45 90,55 C80,65 60,65 50,55 C40,65 20,65 10,55 C0,45 0,25 10,15 C20,5 40,5 50,15 Z" fill="#e91e63"/>
+                        <path d="M50,55 L50,85" stroke="#e91e63" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span class="touch-text">Tap the<br>Balloon</span>
+            </button>
+            <div class="name-text">1ST BIRTHDAY</div>
+        </div>
     </div>
 
-    <div class="controls" aria-hidden="false">
-      <button id="musicToggle" class="btn" title="toggle music">Music: Off</button>
-      <button id="downloadBtn" class="btn" title="download card">Download card</button>
+    <!-- Main content -->
+    <div class="main-content" id="mainContent">
+        <div class="birthday-card">
+            <div class="invitation-header">You're invited to celebrate</div>
+
+            <div class="baby-name">
+                AYANSH'S<br>FIRST BIRTHDAY
+            </div>
+
+            <div class="highlight-line">
+                One Magical Year
+            </div>
+
+            <div class="event-details">
+                <div class="event-row">
+                    <span class="event-label">Date:</span>
+                    <span class="event-value">Thursday, 10 October 2024</span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Time:</span>
+                    <span class="event-value">6:00 PM onwards</span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Venue:</span>
+                    <span class="event-value">
+                        <span class="map-link" onclick="openMap('mig')">
+                            MIG Cricket Club, Bandra East, Mumbai
+                        </span>
+                    </span>
+                </div>
+
+                <div class="event-row">
+                    <span class="event-label">Dress Code:</span>
+                    <span class="event-value">Casual & Colorful</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-primary" type="button" onclick="openRSVP()">RSVP Now</button>
+            </div>
+
+            <div class="theme-note">Theme: Fun & Frolic</div>
+            
+            <div class="countdown-section">
+                <div style="margin:.25rem 0 .5rem;font-weight:700;letter-spacing:.08em">
+                    COUNTDOWN TO THE CELEBRATION
+                </div>
+                <div class="countdown-timer" id="countdownTimer">Loading...</div>
+            </div>
+        </div>
+
+        <div class="footer">Join us for cake, games and lots of fun!</div>
     </div>
 
-    <div class="hero-content">
-      <div class="quote">"One little smile of yours can light up our whole world."</div>
-      <div class="subtitle">You're cordially invited</div>
-      <div class="title">Ayansh's 1st Birthday</div>
-      <div class="cta-row">
-        <button class="btn primary" id="rsvpBtn">RSVP</button>
-        <a class="btn" href="#details" role="button">More details</a>
-      </div>
-    </div>
-  </div>
+    <script>
+        // Music functionality
+        const bgm = document.getElementById('bgm');
+        const musicBtn = document.getElementById('musicControl');
+        let musicOn = false;
 
-  <div id="details" class="details" aria-label="Event details">
-    <div class="event-line big">Thursday, 10 October 2024 — 6:00 PM</div>
-    <div class="event-line">Venue: MIG Cricket Club, Bandra East, Mumbai</div>
-    <div class="event-line">Dress code: Casual party</div>
-    <p style="color:var(--muted); margin-top:10px">
-      Join us in celebrating this special milestone! There will be cake, games, and lots of fun. 
-      Kids-friendly event. Please RSVP so we can make proper arrangements.
-    </p>
-  </div>
-</div>
+        function uiMusic(on) {
+            musicBtn.textContent = on ? 'Music: On' : 'Music: Off';
+            musicBtn.setAttribute('aria-pressed', String(on));
+        }
 
-<!-- RSVP modal -->
-<div id="rsvpModal" class="rsvp-modal" role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="rsvp-panel">
-    <button class="close-x" id="closeRsvp">✕</button>
-    <h3>RSVP for Ayansh's Birthday</h3>
-    <div style="font-size:.9rem;color:var(--muted);margin-bottom:8px;">Please let us know if you can join the celebration</div>
-    <div class="form-row">
-      <input id="rname" placeholder="Your name" />
-    </div>
-    <div class="form-row">
-      <input id="rguest" placeholder="Number of people attending" type="number" min="0" />
-    </div>
-    <div class="form-row">
-      <textarea id="rmsg" rows="3" placeholder="Message (optional)"></textarea>
-    </div>
-    <div style="display:flex; gap:8px; justify-content:flex-end;">
-      <button class="btn" id="rCancel">Cancel</button>
-      <button class="btn primary" id="rSend">Send RSVP</button>
-    </div>
-  </div>
-</div>
+        async function playMusic() {
+            try {
+                bgm.volume = .35;
+                bgm.loop = true;
+                await bgm.play();
+                musicOn = true;
+                uiMusic(true);
+            } catch {
+                musicBtn.textContent = 'Tap to play';
+            }
+        }
 
-<!-- hidden audio - Your personal birthday music -->
-<audio id="bgAudio" loop preload="auto">
-  <source src="happy-birthday-334876.mp3" type="audio/mpeg">
-</audio>
+        function pauseMusic() {
+            bgm.pause();
+            musicOn = false;
+            uiMusic(false);
+        }
 
-<script>
-  // --- Slideshow ---
-  const slides = document.querySelectorAll("#introSlideshow .slideshow-img");
-  let currentSlide = 0;
-  function cycleSlides(){
-    if (!slides || slides.length === 0) return;
-    slides.forEach((s,i)=> s.classList.toggle('active', i===currentSlide));
-    currentSlide = (currentSlide + 1) % slides.length;
-  }
-  // start immediately and repeat
-  cycleSlides();
-  const slideInterval = setInterval(cycleSlides, 4000);
+        musicBtn.addEventListener('click', () => musicOn ? pauseMusic() : playMusic());
 
-  // --- Music toggle ---
-  const musicToggle = document.getElementById('musicToggle');
-  const bgAudio = document.getElementById('bgAudio');
-  let musicOn = false;
-  musicToggle.addEventListener('click', () => {
-    musicOn = !musicOn;
-    if (musicOn){ bgAudio.play().catch(()=>{}); musicToggle.textContent = 'Music: On'; }
-    else { bgAudio.pause(); musicToggle.textContent = 'Music: Off'; }
-  });
+        // Auto-unlock music on first interaction
+        (function unlockOnce() {
+            const once = () => {
+                playMusic();
+                removeEventListener('pointerdown', once);
+                removeEventListener('keydown', once);
+            };
+            addEventListener('pointerdown', once, { passive: true });
+            addEventListener('keydown', once);
+        })();
 
-  // --- Download card ---
-  const downloadBtn = document.getElementById('downloadBtn');
-  downloadBtn.addEventListener('click', async () => {
-    const content = `You're invited!\n\nEvent: Ayansh's 1st Birthday\nWhen: Thursday, 10 October 2024 — 6:00 PM\nVenue: MIG Cricket Club, Bandra East, Mumbai\nDress Code: Casual party\n\nPlease RSVP so we can arrange seating.\n\nSee you there!`;
-    const blob = new Blob([content], {type: 'text/plain'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'Ayansh_Birthday_Invite.txt';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  });
+        // Balloon button functionality
+        const balloonBtn = document.getElementById('balloonButton');
+        let started = false;
 
-  // --- RSVP modal logic ---
-  const rsvpBtn = document.getElementById('rsvpBtn');
-  const rsvpModal = document.getElementById('rsvpModal');
-  const closeRsvp = document.getElementById('closeRsvp');
-  const rCancel = document.getElementById('rCancel');
-  const rSend = document.getElementById('rSend');
+        function begin() {
+            if (started) return;
+            started = true;
 
-  function showRsvp(show){
-    rsvpModal.classList.toggle('show', show);
-    rsvpModal.setAttribute('aria-hidden', show ? 'false' : 'true');
-  }
-  rsvpBtn.addEventListener('click', ()=> showRsvp(true));
-  closeRsvp.addEventListener('click', ()=> showRsvp(false));
-  rCancel.addEventListener('click', ()=> showRsvp(false));
-  rsvpModal.addEventListener('click', (e) => { if (e.target === rsvpModal) showRsvp(false); });
+            balloonBtn.style.opacity = '0';
+            document.getElementById('touchIntro').classList.add('hidden');
 
-  rSend.addEventListener('click', () => {
-    const name = document.getElementById('rname').value.trim();
-    const guests = document.getElementById('rguest').value.trim();
-    const msg = document.getElementById('rmsg').value.trim();
+            playMusic();
+            document.getElementById('mainContent').classList.add('visible');
+        }
 
-    if (!name){ alert('Please enter your name'); return; }
+        balloonBtn.addEventListener('pointerup', begin, { passive: true });
+        setTimeout(() => balloonBtn.classList.add('floating'), 900);
 
-    // Store RSVP in localStorage
-    const existing = JSON.parse(localStorage.getItem('ayansh_rsvps') || '[]');
-    existing.push({name, guests: guests || 1, msg, time: new Date().toISOString()});
-    localStorage.setItem('ayansh_rsvps', JSON.stringify(existing));
+        // Map functionality
+        function openMap(location) {
+            const maps = {
+                'mig': 'https://maps.google.com/?q=MIG+Cricket+Club+Bandra+East+Mumbai'
+            };
+            window.open(maps[location], '_blank');
+        }
 
-    showRsvp(false);
-    alert('Thank you! Your RSVP has been recorded. We look forward to celebrating with you!');
-    
-    // Clear form
-    document.getElementById('rname').value = '';
-    document.getElementById('rguest').value = '';
-    document.getElementById('rmsg').value = '';
-  });
+        // Countdown timer
+        function updateCountdown() {
+            const target = new Date('2024-10-10T18:00:00+05:30').getTime();
+            const now = Date.now();
+            const diff = Math.max(0, target - now);
+            
+            const d = Math.floor(diff / 86400000);
+            const h = String(Math.floor(diff % 86400000 / 3600000)).padStart(2, '0');
+            const m = String(Math.floor(diff % 3600000 / 60000)).padStart(2, '0');
+            const s = String(Math.floor(diff % 60000 / 1000)).padStart(2, '0');
+            
+            document.getElementById('countdownTimer').textContent = 
+                diff ? `${d} days ${h}:${m}:${s}` : "The celebration begins!";
+        }
 
-  // Optional: expose a simple console read of RSVPs for host
-  window.listRsvps = () => JSON.parse(localStorage.getItem('ayansh_rsvps')||'[]');
-</script>
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
+        // Simple RSVP functionality
+        function openRSVP() {
+            const name = prompt("Please enter your name to RSVP:");
+            if (name) {
+                // Store in localStorage
+                const rsvps = JSON.parse(localStorage.getItem('ayansh_rsvps') || '[]');
+                rsvps.push({
+                    name: name,
+                    timestamp: new Date().toISOString(),
+                    guests: 1
+                });
+                localStorage.setItem('ayansh_rsvps', JSON.stringify(rsvps));
+                
+                alert(`Thank you, ${name}! We're excited to celebrate with you!`);
+            }
+        }
+
+        // View RSVPs (for host - can be called from browser console)
+        window.viewRSVPs = function() {
+            const rsvps = JSON.parse(localStorage.getItem('ayansh_rsvps') || '[]');
+            console.log('RSVPs:', rsvps);
+            return rsvps;
+        };
+    </script>
 </body>
 </html>
