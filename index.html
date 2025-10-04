@@ -5,7 +5,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ayansh — Jungle Themed 1st Birthday</title>
+    <title>Ayansh — Jungle Themed First Birthday</title>
     <style>
         :root {
             --jungle-green: #2e7d32;
@@ -33,13 +33,26 @@
             background: var(--jungle-dark);
         }
 
-        /* Jungle Background with Animation */
-        .jungle-background {
+        /* Background Slideshow with Family Photos */
+        #backgroundSlideshow {
             position: fixed;
             inset: 0;
             z-index: -5;
-            background: linear-gradient(180deg, var(--jungle-sky) 0%, #4caf50 100%);
             overflow: hidden;
+        }
+
+        .slideshow-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+            filter: brightness(0.7);
+        }
+
+        .slideshow-img.active {
+            opacity: 1;
         }
 
         .jungle-overlay {
@@ -259,6 +272,73 @@
 
         @keyframes fadeUp {
             to { opacity: 1; transform: none; }
+        }
+
+        /* Message Sequence */
+        .message-sequence {
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            background: rgba(27, 94, 32, 0.95);
+            backdrop-filter: blur(15px);
+        }
+
+        .message-sequence.visible {
+            display: flex;
+        }
+
+        .message-line {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(20px, 5vw, 28px);
+            line-height: 1.6;
+            text-align: center;
+            margin: 1rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+        }
+
+        .message-line.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .baby-name-highlight {
+            font-family: "Alex Brush", cursive;
+            font-size: clamp(36px, 8vw, 60px);
+            color: var(--jungle-gold);
+            margin: 1rem 0;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .continue-btn {
+            margin-top: 2rem;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, var(--jungle-gold), #ff5722);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .continue-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Main content */
@@ -511,6 +591,10 @@
                 margin-bottom: 1.5rem;
                 font-size: clamp(18px, 4vw, 24px);
             }
+
+            .message-line {
+                font-size: clamp(18px, 4vw, 24px);
+            }
         }
 
         @media (max-width: 360px) {
@@ -526,28 +610,19 @@
                 grid-template-columns: 70px 1fr;
             }
         }
-
-        /* Professional animations */
-        @keyframes professionalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .professional-entrance {
-            animation: professionalFadeIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
-        }
     </style>
 </head>
 
 <body>
-    <!-- Jungle Background -->
-    <div class="jungle-background"></div>
+    <!-- Background Slideshow with Family Photos -->
+    <div id="backgroundSlideshow">
+        <img src="ChatGPT%20Image%20Oct%204,%202025,%2001_47_52%20AM.png" alt="Family photo 1" class="slideshow-img active">
+        <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_08_24%20AM.png" alt="Family photo 2" class="slideshow-img">
+        <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_30_18%20AM.png" alt="Family photo 3" class="slideshow-img">
+        <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_34_55%20AM.png" alt="Family photo 4" class="slideshow-img">
+        <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_39_41%20AM.png" alt="Family photo 5" class="slideshow-img">
+    </div>
+    
     <div class="jungle-overlay"></div>
     
     <!-- Animated Jungle Animals -->
@@ -580,7 +655,7 @@
 
     <!-- Intro screen -->
     <div id="touchIntro" role="dialog" aria-modal="true" aria-label="Intro">
-        <div class="welcome-message professional-entrance">
+        <div class="welcome-message">
             "Tiny hands, tiny feet,<br>
             our baby boy is oh so sweet!<br>
             Come celebrate as Ayansh turns ONE!" 🎂💚
@@ -602,17 +677,27 @@
                 </div>
                 <span class="touch-text">🌿 Jungle Adventure<br>Tap to Explore</span>
             </button>
-            <div class="name-text">1ST BIRTHDAY</div>
+            <div class="name-text">FIRST BIRTHDAY</div>
         </div>
+    </div>
+
+    <!-- Message Sequence -->
+    <div class="message-sequence" id="messageSequence">
+        <div class="message-line" id="line1">✨ With great joy and gratitude,</div>
+        <div class="message-line" id="line2">we, Harshal & Kavita Bhalerao,</div>
+        <div class="message-line" id="line3">invite you to celebrate the first birthday of our beloved son</div>
+        <div class="baby-name-highlight" id="line4">🎂 Ayansh 🎂</div>
+        <div class="message-line" id="line5">Please join us, bless him, and make this day truly special with your presence.</div>
+        <button class="continue-btn" id="continueBtn">Continue to Details →</button>
     </div>
 
     <!-- Main content -->
     <div class="main-content" id="mainContent">
-        <div class="birthday-card professional-entrance">
+        <div class="birthday-card">
             <div class="invitation-header">Welcome to the Jungle Celebration!</div>
 
             <div class="baby-name">
-                AYANSH'S<br>WILD ONE
+                AYANSH'S<br>FIRST BIRTHDAY
             </div>
 
             <div class="highlight-line">
@@ -636,7 +721,7 @@
 
                 <div class="event-row">
                     <span class="event-label">👕 Dress Code:</span>
-                    <span class="event-value">Jungle Safari & Casual</span>
+                    <span class="event-value">Party Wear Colorful</span>
                 </div>
             </div>
 
@@ -666,7 +751,21 @@
     </div>
 
     <script>
-        // Background music with jungle theme
+        // Background Slideshow
+        const slides = document.querySelectorAll("#backgroundSlideshow .slideshow-img");
+        let currentSlide = 0;
+
+        function cycleSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle("active", index === currentSlide);
+            });
+            currentSlide = (currentSlide + 1) % slides.length;
+        }
+
+        setInterval(cycleSlides, 4000);
+        cycleSlides();
+
+        // Music functionality
         const bgm = document.getElementById('bgm');
         const musicBtn = document.getElementById('musicControl');
         let musicOn = false;
@@ -707,6 +806,34 @@
             document.addEventListener('click', once);
         })();
 
+        // Message sequence functionality
+        let currentMessage = 0;
+        const messages = ['line1', 'line2', 'line3', 'line4', 'line5'];
+        const messageSequence = document.getElementById('messageSequence');
+        const continueBtn = document.getElementById('continueBtn');
+
+        function showNextMessage() {
+            if (currentMessage < messages.length) {
+                const currentLine = document.getElementById(messages[currentMessage]);
+                currentLine.classList.add('visible');
+                currentMessage++;
+                
+                if (currentMessage === messages.length) {
+                    // Show continue button after all messages
+                    setTimeout(() => {
+                        continueBtn.classList.add('visible');
+                    }, 1000);
+                } else {
+                    setTimeout(showNextMessage, 800);
+                }
+            }
+        }
+
+        function startMessageSequence() {
+            messageSequence.classList.add('visible');
+            setTimeout(showNextMessage, 500);
+        }
+
         // Jungle button functionality
         const jungleBtn = document.getElementById('jungleButton');
         let started = false;
@@ -715,19 +842,19 @@
             if (started) return;
             started = true;
 
-            // Add exit animation to intro
-            document.getElementById('touchIntro').style.animation = 'fadeOut 0.8s ease forwards';
-            
-            setTimeout(() => {
-                document.getElementById('touchIntro').classList.add('hidden');
-                document.getElementById('mainContent').classList.add('visible');
-            }, 800);
-
+            document.getElementById('touchIntro').classList.add('hidden');
+            startMessageSequence();
             playMusic();
         }
 
         jungleBtn.addEventListener('click', begin);
         jungleBtn.addEventListener('touchstart', begin, { passive: true });
+
+        // Continue button functionality
+        continueBtn.addEventListener('click', function() {
+            messageSequence.classList.remove('visible');
+            document.getElementById('mainContent').classList.add('visible');
+        });
 
         // Map functionality
         function openMap() {
@@ -736,15 +863,13 @@
 
         // Calendar functionality
         function addToCalendar() {
-            // Download the .ics file you uploaded
             const link = document.createElement('a');
             link.href = 'Ayanshbirthdaycall.ics';
-            link.download = 'Ayansh_1st_Birthday.ics';
+            link.download = 'Ayansh_First_Birthday.ics';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
             
-            // Show confirmation
             alert('📅 Birthday event added to your calendar! See you in the jungle! 🌴');
         }
 
@@ -766,14 +891,7 @@
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Mobile touch improvements
-        document.addEventListener('touchmove', (e) => {
-            if (e.scale !== 1) {
-                e.preventDefault();
-            }
-        }, { passive: false });
-
-        // Add some random leaf elements dynamically
+        // Create additional leaves dynamically
         function createLeaves() {
             const leavesContainer = document.querySelector('.leaves');
             for (let i = 0; i < 15; i++) {
@@ -787,14 +905,6 @@
         }
 
         createLeaves();
-
-        // Professional entrance animations
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.professional-entrance');
-            elements.forEach((el, index) => {
-                el.style.animationDelay = (index * 0.2) + 's';
-            });
-        });
     </script>
 </body>
 </html>
