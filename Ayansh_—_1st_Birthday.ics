@@ -1,0 +1,20 @@
+BEGIN:VCALENDAR
+PRODID:-//AyanshBirthday//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+UID:evt-1759586113409-23825
+DTSTAMP:20251004T135513Z
+DTSTART:20251010T123000Z
+DTEND:20251010T153000Z
+SUMMARY:Ayansh — 1st Birthday
+DESCRIPTION:With great joy\, Harshal & Kavita Bhalerao invite you to celebrate the first birthday of our son\, Ayansh. Cake\, games and family time.\n\nLocation: MIG Cricket Club\, Bandra\, Mumbai
+LOCATION:MIG Cricket Club\, Bandra\, Mumbai
+BEGIN:VALARM
+TRIGGER:-PT8H
+ACTION:DISPLAY
+DESCRIPTION:Reminder
+END:VALARM
+END:VEVENT
+END:VCALENDAR
