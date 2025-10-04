@@ -3,332 +3,354 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ayansh — 1st Birthday Invitation</title>
-
+<title>Ayansh — 1st Birthday</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
-
 <style>
   :root{
-    --bg:#f7fbff;
-    --card:#ffffff;
-    --accent:#1e88e5;
-    --muted:#6b7280;
-    --glass: rgba(255,255,255,0.75);
-    --max-width:980px;
+    --accent:#2b8cff; --accent-2:#ffb74d; --muted:#64748b;
+    --card:#ffffff; --bg:#f4fbff;
+    --maxWidth:1100px; --glass: rgba(255,255,255,0.85);
   }
   *{box-sizing:border-box}
-  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#0f1724;-webkit-font-smoothing:antialiased;}
+  html,body{height:100%;margin:0;background:var(--bg);font-family:Inter,system-ui,Segoe UI,Roboto,Arial;}
   a{color:inherit}
-  /* background slideshow */
-  #bg{
-    position:fixed;inset:0;z-index:-10;overflow:hidden;
-  }
-  #bg img{
-    position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease,transform 8s linear;transform:scale(1.02);
-    filter:brightness(.55) saturate(.95);
-  }
-  #bg img.active{opacity:1;transform:scale(1);}
-  /* subtle overlay */
-  .bg-overlay{
-    position:fixed;inset:0;z-index:-5;background:linear-gradient(180deg, rgba(8,44,80,0.18), rgba(2,20,40,0.28));
-    pointer-events:none;
-  }
+  /* global layout */
+  .stage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+  .shell{width:100%;max-width:var(--maxWidth);position:relative}
 
-  /* container */
-  .wrap{max-width:var(--max-width);margin:0 auto;padding:26px;min-height:100vh;display:flex;align-items:center;justify-content:center;}
-  .card{
-    width:100%;max-width:760px;background:linear-gradient(180deg,var(--glass), rgba(255,255,255,0.88));backdrop-filter:blur(8px);
-    border-radius:14px;box-shadow:0 18px 40px rgba(2,12,34,0.18);padding:28px;display:grid;grid-template-columns:1fr 360px;gap:24px;
-  }
+  /* background slideshow (cover is full-bleed) */
+  .cover-bg{position:fixed;inset:0;z-index:-40;overflow:hidden}
+  .cover-bg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.03);transition:opacity .9s ease,transform 10s linear;filter:contrast(.95) brightness(.65);}
+  .cover-bg img.active{opacity:1;transform:scale(1);}
+  .overlay{position:fixed;inset:0;z-index:-30;background:linear-gradient(180deg, rgba(6,20,30,0.28), rgba(6,20,30,0.32));}
 
-  /* Left: hero details */
-  .hero{
-    display:flex;flex-direction:column;justify-content:center;gap:14px;padding:8px 2rem;
+  /* card + sections */
+  .card{background:linear-gradient(180deg,var(--glass),rgba(255,255,255,0.98));border-radius:18px;box-shadow:0 30px 80px rgba(2,12,34,0.16);overflow:hidden;display:grid;grid-template-columns:1fr 420px}
+  @media (max-width:880px){ .card{grid-template-columns:1fr} }
+
+  /* left cover area (visible before tap) */
+  .cover{
+    padding:36px 30px; color:#fff; display:flex;flex-direction:column; justify-content:center; gap:10px; min-height:60vh;
   }
-  .lead{
-    font-family: 'Playfair Display', serif;font-size:clamp(22px,3.2vw,36px);color:#fff;text-shadow:0 6px 20px rgba(2,12,34,.5);letter-spacing:0.02em;margin:0;
-  }
-  .sub{
-    color:rgba(255,255,255,0.95);font-weight:500;font-size:clamp(13px,1.6vw,16px);
-    text-shadow:0 4px 10px rgba(0,0,0,0.25);margin:0;
-  }
-  .hero-cta{display:flex;gap:12px;margin-top:8px;flex-wrap:wrap}
-  .btn{
-    border:0;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(2,12,34,.16);
-    transition:transform .16s ease,box-shadow .16s ease;
-  }
-  .btn:active{transform:translateY(1px)}
+  .pre-title{font-size:14px;font-weight:600;opacity:.95}
+  .title{font-family:'Playfair Display',serif;font-size:clamp(30px,6.6vw,54px);line-height:1;letter-spacing:0.02em;margin:0;text-shadow:0 8px 30px rgba(2,12,34,0.35)}
+  .subtitle{font-size:15px;color:rgba(255,255,255,0.92);margin-top:6px;max-width:60ch}
+
+  /* rhythm lines (reveal one-by-one) */
+  .lines{margin-top:14px;display:flex;flex-direction:column;gap:8px}
+  .line{opacity:0;transform:translateY(10px);transition:opacity .4s ease, transform .4s ease}
+  .line.show{opacity:1;transform:none;color:rgba(255,255,255,0.95)}
+
+  /* CTA button */
+  .cta-row{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn{border:0;padding:12px 16px;border-radius:999px;font-weight:700;cursor:pointer;box-shadow:0 8px 20px rgba(2,12,34,0.12)}
   .btn-primary{background:linear-gradient(90deg,var(--accent),#1161b6);color:#fff}
-  .btn-ghost{background:rgba(255,255,255,0.12);color:#fff;border:1px solid rgba(255,255,255,0.06)}
+  .btn-ghost{background:rgba(255,255,255,0.12);color:#fff}
 
-  /* Right: info panel */
-  .info{
-    padding:22px;border-radius:10px;background:linear-gradient(180deg,#fff,#fbfdff);display:flex;flex-direction:column;gap:12px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
-  }
-  .small{font-size:13px;color:var(--muted)}
-  .title{font-family:Playfair Display,serif;font-size:20px;color:#0f1724;margin:0}
-  .name{font-family:Playfair Display,serif;font-size:22px;color:var(--accent);margin:4px 0;font-weight:700}
-  .detail-row{display:flex;gap:10px;align-items:center}
-  .label{min-width:72px;color:var(--muted);font-weight:600;font-size:13px}
-  .value{font-size:14px;color:#0f1724}
+  /* floating decorations: balloons & animals */
+  .floating{position:absolute;pointer-events:none;z-index:6}
+  .balloon{position:absolute;width:40px;height:60px;border-radius:50% 50% 45% 45%;background:linear-gradient(180deg,#ff9db5,#ff6f91);box-shadow:0 8px 18px rgba(0,0,0,.18);transform-origin:center bottom}
+  .balloon::after{content:'';position:absolute;left:50%;bottom:-18px;width:2px;height:18px;background:rgba(0,0,0,.12);transform:translateX(-50%)}
+  .float1{left:12%;top:55%}
+  .float2{left:30%;top:68%;width:32px;height:48px;background:linear-gradient(180deg,#ffd08a,#ffb74d)}
+  .float3{right:12%;top:62%;background:linear-gradient(180deg,#9be7ff,#5ec9ff)}
+  @keyframes bob{0%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-18px) rotate(3deg)}100%{transform:translateY(0) rotate(-4deg)}}
+  .balloon{animation:bob 4.6s ease-in-out infinite}
+  /* small animal svgs - subtle, professional motion */
+  .animal{position:absolute;width:84px;height:84px;transform-origin:center center;animation:wiggle 5s ease-in-out infinite}
+  @keyframes wiggle{0%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}100%{transform:translateY(0) rotate(-3deg)}}
+  .monkey{left:6%;top:18%}
+  .elephant{right:6%;top:18%}
 
-  .map-link{display:inline-block;padding:7px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),#1161b6);color:#fff;font-weight:700;text-decoration:none}
-  .map-link:active{transform:translateY(1px)}
+  /* right details panel */
+  .details{padding:28px;background:var(--card)}
+  .details h3{margin:0 0 6px 0;font-family:Playfair Display,serif}
+  .details p{margin:0;color:var(--muted)}
+  .field{display:flex;gap:8px;align-items:center;margin-top:12px}
+  .label{min-width:72px;font-weight:600;color:var(--muted)}
+  .value{font-weight:700;color:#0f1724}
+  .map-btn{display:inline-block;padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,var(--accent),#1161b6);color:#fff;text-decoration:none;font-weight:700;margin-top:12px}
+  .countdown{margin-top:16px;padding:8px 10px;border-radius:10px;background:linear-gradient(90deg,rgba(43,140,255,0.06),rgba(255,183,77,0.03));display:inline-block;font-weight:700;color:var(--accent)}
+  footer.note{margin-top:18px;color:var(--muted);font-size:13px}
 
-  .countdown{margin-top:8px;padding:10px;border-radius:8px;background:linear-gradient(90deg,rgba(30,136,229,0.08),rgba(255,152,0,0.06));display:inline-block;font-weight:700;color:var(--accent)}
-
-  footer.site-foot{margin-top:12px;font-size:13px;color:var(--muted);text-align:center;padding-top:8px;border-top:1px dashed rgba(15,23,36,0.04)}
-
-  /* music control */
-  .music{position:fixed;top:16px;left:16px;z-index:140;background:rgba(255,255,255,0.9);padding:8px;border-radius:999px;border:0;box-shadow:0 6px 18px rgba(2,12,34,0.15);font-weight:700}
+  /* animation helpers */
+  .fade-out{animation:coverOut .6s ease forwards}
+  @keyframes coverOut{to{opacity:0;transform:scale(.98) translateY(-6px)}}
 
   /* responsive */
-  @media (max-width:920px){
-    .card{grid-template-columns:1fr; padding:18px}
-    .hero{padding:8px 4px}
-    .lead{font-size:28px}
-  }
-  @media (max-width:460px){
-    .lead{font-size:20px}
-    .name{font-size:18px}
-    .map-link{padding:8px 10px}
+  @media (max-width:640px){
+    .card{border-radius:12px}
+    .details{padding:18px}
+    .balloon{display:block}
+    .animal{display:none}
   }
 </style>
 </head>
 <body>
 
-<!-- Background slideshow -->
-<div id="bg" aria-hidden="true">
-  <!-- Replace these src values with your uploaded image filenames (exact names) -->
-  <img src="ChatGPT%20Image%20Oct%204,%202025,%2001_47_52%20AM.png" alt="" class="active">
-  <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_08_24%20AM.png" alt="">
-  <img src="ChatGPT%20Image%20Oct%204,%202025,%2002_30_18%20AM.png" alt="">
+<!-- BACKGROUND IMAGES (replace the data-src values with the exact filenames you upload) -->
+<div class="cover-bg" aria-hidden="true">
+  <img data-src="jungle1.jpg" alt="jungle" class="active">
+  <img data-src="jungle2.jpg" alt="jungle">
+  <img data-src="jungle3.jpg" alt="jungle">
 </div>
-<div class="bg-overlay" aria-hidden="true"></div>
+<div class="overlay"></div>
 
-<!-- music control -->
-<button class="music" id="musicBtn" aria-pressed="false">🎵 Music: Off</button>
-<audio id="bgAudio" preload="auto" loop>
-  <!-- KEEP this filename as the exact file you uploaded OR change it to match -->
+<div class="stage">
+  <div class="shell">
+    <div class="card" id="card">
+
+      <!-- LEFT: cover (big visual, initial screen) -->
+      <section class="cover" id="cover" aria-labelledby="coverTitle">
+        <div class="pre-title">With joy and gratitude</div>
+        <h1 id="coverTitle" class="title">AYANSH — 1st Birthday</h1>
+        <p class="subtitle">A year of giggles, tiny steps and big smiles. Come celebrate with us.</p>
+
+        <div class="lines" id="lines">
+          <div class="line">Please join us to bless Ayansh and make this day special.</div>
+          <div class="line">Cake • Games • Family • Fun</div>
+          <div class="line">Tap below to continue — we'll take you to the venue & calendar.</div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn btn-primary" id="celebrateBtn" aria-controls="details">🎉 Let's celebrate</button>
+          <button class="btn btn-ghost" id="musicToggle">🎵 Music: Off</button>
+        </div>
+      </section>
+
+      <!-- RIGHT: details panel (second screen) -->
+      <aside class="details" id="details" aria-hidden="true">
+        <h3>Invitation</h3>
+        <p>With great joy, we — <strong>Harshal &amp; Kavita Bhalerao</strong> — invite you to the first birthday of our son, <strong>Ayansh</strong>.</p>
+
+        <div class="field"><div class="label">When</div><div class="value" id="whenText">Friday, 10 Oct 2025 · 6:00 PM</div></div>
+        <div class="field"><div class="label">Where</div><div class="value">MIG Cricket Club, Bandra, Mumbai</div></div>
+        <div class="field"><div class="label">Dress</div><div class="value">Casual &amp; colorful</div></div>
+
+        <a class="map-btn" id="openMap" href="#" role="button">Open directions</a>
+        <div style="margin-top:14px">
+          <button class="btn btn-primary" id="addCalendar">📅 Add to calendar</button>
+          <button class="btn btn-ghost" id="shareBtn">🔗 Share link</button>
+        </div>
+
+        <div class="countdown" id="countdown">Loading…</div>
+
+        <footer class="note">Tip: add this page to your phone’s home screen for quick access. The calendar file includes an 8-hour reminder.</footer>
+      </aside>
+
+      <!-- floating decorations -->
+      <div class="floating balloon float1" style="left:10%;top:48%"></div>
+      <div class="floating balloon float2" style="left:28%;top:68%"></div>
+      <div class="floating balloon float3" style="right:12%;top:58%"></div>
+
+      <!-- simple inline SVG animals (non-intrusive, scalable) -->
+      <svg class="animal monkey" viewBox="0 0 120 120" aria-hidden="true" style="left:5%;top:10%">
+        <g transform="translate(8,8)" fill="none">
+          <circle cx="48" cy="34" r="30" fill="#d8a06f"/>
+          <circle cx="32" cy="26" r="6" fill="#ffffff" opacity="0.9"/>
+          <circle cx="64" cy="26" r="6" fill="#ffffff" opacity="0.9"/>
+          <circle cx="32" cy="26" r="3" fill="#3b2f2f"/>
+          <circle cx="64" cy="26" r="3" fill="#3b2f2f"/>
+          <ellipse cx="48" cy="54" rx="18" ry="12" fill="#f5d1b4"/>
+        </g>
+      </svg>
+
+      <svg class="animal elephant" viewBox="0 0 120 120" aria-hidden="true" style="right:6%;top:12%">
+        <g transform="translate(6,6)" fill="none">
+          <rect x="8" y="36" width="56" height="34" rx="8" fill="#9ad0e6"/>
+          <circle cx="16" cy="28" r="12" fill="#9ad0e6"/>
+          <circle cx="52" cy="28" r="10" fill="#9ad0e6"/>
+          <rect x="20" y="62" width="8" height="18" rx="3" fill="#6aa6be"/>
+          <rect x="44" y="62" width="8" height="18" rx="3" fill="#6aa6be"/>
+        </g>
+      </svg>
+
+    </div> <!-- card -->
+  </div> <!-- shell -->
+</div> <!-- stage -->
+
+<!-- audio (update filename if different) -->
+<audio id="bgAudio" loop preload="auto">
   <source src="happy-birthday-357371.mp3" type="audio/mpeg">
   Your browser does not support the audio element.
 </audio>
 
-<div class="wrap" role="main">
-  <div class="card" role="article" aria-labelledby="invite-headline">
-
-    <!-- LEFT: hero -->
-    <div class="hero" aria-hidden="false">
-      <h1 id="invite-headline" class="lead">With joy and gratitude — we invite you</h1>
-      <p class="sub">Harshal &amp; Kavita Bhalerao invite you to celebrate the first birthday of our son</p>
-
-      <div style="margin-top:8px;">
-        <div class="name" aria-hidden="false">AYANSH</div>
-        <div class="small" style="margin-bottom:10px">Beloved son • Turning ONE</div>
-      </div>
-
-      <div class="hero-cta">
-        <!-- Add to calendar button (built-in .ics + Google fallback) -->
-        <button class="btn btn-primary" id="addCalendar">📅 Add to calendar</button>
-        <a class="btn btn-ghost" id="openMap" href="#" role="button">📍 Open Map</a>
-      </div>
-
-      <p style="margin-top:10px;color:rgba(255,255,255,0.9);font-size:14px;max-width:44ch">
-        Please join us to bless Ayansh and celebrate this special milestone — cake, family and fun.
-      </p>
-    </div>
-
-    <!-- RIGHT: info -->
-    <aside class="info" aria-label="Event details">
-      <div class="title">Invitation</div>
-      <div class="value" style="margin-bottom:6px">With great joy and gratitude, <strong>we</strong> — Harshal &amp; Kavita Bhalerao — invite you to the first birthday of our son, Ayansh.</div>
-
-      <div class="detail-row" style="margin-top:8px">
-        <div class="label">When</div>
-        <div class="value" id="whenLabel">Friday, 10 Oct 2025 · 6:00 PM</div>
-      </div>
-
-      <div class="detail-row">
-        <div class="label">Where</div>
-        <div class="value">MIG Cricket Club, Bandra, Mumbai</div>
-      </div>
-
-      <div class="detail-row">
-        <div class="label">Dress</div>
-        <div class="value">Casual &amp; colorful</div>
-      </div>
-
-      <div style="margin-top:12px">
-        <a id="mapBtn" class="map-link" href="#" role="button">Open directions</a>
-      </div>
-
-      <div style="margin-top:14px">
-        <div class="small">Countdown</div>
-        <div class="countdown" id="countdown">Loading…</div>
-      </div>
-
-      <footer class="site-foot">Add this page to your phone home screen for quick access. Tap Add to calendar to save the event (8-hour reminder included).</footer>
-    </aside>
-
-  </div>
-</div>
-
 <script>
-  // -------------------- slideshow --------------------
-  (function(){
-    const imgs = Array.from(document.querySelectorAll('#bg img'));
-    if(!imgs.length) return;
-    let i = 0;
+/* ---------------------- Config (EDIT these values) ---------------------- */
+const EVENT = {
+  title: "Ayansh — 1st Birthday",
+  description: "With great joy, Harshal & Kavita Bhalerao invite you to celebrate the first birthday of our son, Ayansh. Cake, games and family time.",
+  locationText: "MIG Cricket Club, Bandra, Mumbai",
+  mapUrl: "https://maps.app.goo.gl/WLU1ynjK8tgKdrZX9",
+  // local time MUST include timezone offset (keep +05:30)
+  startLocalISO: "2025-10-10T18:00:00+05:30",
+  durationMinutes: 180 // 3 hours
+};
+/* ---------------------------------------------------------------------- */
+
+/* lightweight helper - swap data-src into src and cycle images */
+(function initBg(){
+  const imgs = document.querySelectorAll('.cover-bg img');
+  imgs.forEach(img => {
+    const s = img.getAttribute('data-src');
+    if(s) img.src = s;
+  });
+  let i=0;
+  if(imgs.length>1){
     setInterval(()=> {
-      imgs.forEach((el,idx) => el.classList.toggle('active', idx === i));
-      i = (i+1) % imgs.length;
+      imgs.forEach((im, idx)=> im.classList.toggle('active', idx===i));
+      i=(i+1)%imgs.length;
     }, 4500);
-  })();
-
-  // -------------------- music control --------------------
-  const bgAudio = document.getElementById('bgAudio');
-  const musicBtn = document.getElementById('musicBtn');
-  let musicOn = false;
-  function setMusicUI(on){
-    musicBtn.textContent = on ? '🎵 Music: On' : '🎵 Music: Off';
-    musicBtn.setAttribute('aria-pressed', String(on));
   }
-  musicBtn.addEventListener('click', async () => {
-    if(musicOn){ bgAudio.pause(); musicOn=false; setMusicUI(false); return; }
-    try { bgAudio.volume = 0.35; await bgAudio.play(); musicOn=true; setMusicUI(true); }
-    catch(e){ setMusicUI(false); musicBtn.textContent = '🎵 Tap to play'; }
+})();
+
+/* reveal rhythm lines sequentially for a nice rhythm effect */
+(function revealLines(){
+  const lines = document.querySelectorAll('.line');
+  lines.forEach((l,idx)=> setTimeout(()=> l.classList.add('show'), 700 + idx*420));
+})();
+
+/* handle cover -> details transition */
+const celebrateBtn = document.getElementById('celebrateBtn');
+const cover = document.getElementById('cover');
+const details = document.getElementById('details');
+celebrateBtn.addEventListener('click', () => {
+  // animate out cover
+  cover.classList.add('fade-out');
+  // show details panel (aria)
+  details.setAttribute('aria-hidden','false');
+  // scroll to top of card on small screens
+  setTimeout(()=> {
+    document.getElementById('card').scrollIntoView({behavior:'smooth'});
+  }, 320);
+});
+
+/* music toggle */
+const audio = document.getElementById('bgAudio');
+const musicToggle = document.getElementById('musicToggle');
+let musicOn=false;
+musicToggle.addEventListener('click', async ()=>{
+  try{
+    if(!musicOn){ await audio.play(); musicOn=true; musicToggle.textContent='🎵 Music: On'; audio.volume=0.32; }
+    else{ audio.pause(); musicOn=false; musicToggle.textContent='🎵 Music: Off' }
+  }catch(e){ musicToggle.textContent='🎵 Tap to play'; }
+});
+// unlock autoplay on first user interaction (mobile friendly)
+document.addEventListener('click', function unlock(){ audio.play().then(()=>audio.pause()).catch(()=>{}); document.removeEventListener('click',unlock); }, {once:true});
+
+/* map open */
+document.getElementById('openMap').addEventListener('click', (e)=>{
+  e.preventDefault();
+  window.open(EVENT.mapUrl, '_blank');
+});
+
+/* share link copy */
+document.getElementById('shareBtn').addEventListener('click', async ()=>{
+  const url = location.href;
+  if(navigator.share){
+    navigator.share({title: EVENT.title, text: 'Invitation for Ayansh — 1st Birthday', url}).catch(()=>{});
+    return;
+  }
+  try{
+    await navigator.clipboard.writeText(url);
+    alert('Link copied — share it with friends!');
+  }catch(e){
+    prompt('Copy this link:', url);
+  }
+});
+
+/* countdown */
+(function startCountdown(){
+  const el = document.getElementById('countdown');
+  const target = new Date(EVENT.startLocalISO).getTime();
+  function tick(){
+    const now = Date.now();
+    let diff = Math.max(0, target-now);
+    if(diff<=0){ el.textContent = "🎉 The celebration begins!"; return; }
+    const d = Math.floor(diff/86400000);
+    const h = Math.floor(diff%86400000/3600000);
+    const m = Math.floor(diff%3600000/60000);
+    const s = Math.floor(diff%60000/1000);
+    el.textContent = `${d}d ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+/* -------------------- calendar (.ics) generation w/ 8-hour alarm -------------------- */
+function pad(n){ return String(n).padStart(2,'0'); }
+function formatUTC(d){
+  return d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z';
+}
+function uid(){ return 'evt-' + Date.now() + '-' + Math.floor(Math.random()*100000); }
+function escICSText(s){ return s.replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,'); }
+function buildICS(){
+  const start = new Date(EVENT.startLocalISO);
+  const end = new Date(start.getTime() + EVENT.durationMinutes*60000);
+  const dtstamp = formatUTC(new Date());
+  const dtstart = formatUTC(start);
+  const dtend = formatUTC(end);
+  const id = uid();
+  const alarm = "-PT8H"; // 8 hours before
+  const ics = [
+    "BEGIN:VCALENDAR",
+    "PRODID:-//AyanshBirthday//EN",
+    "VERSION:2.0",
+    "CALSCALE:GREGORIAN",
+    "METHOD:REQUEST",
+    "BEGIN:VEVENT",
+    `UID:${id}`,
+    `DTSTAMP:${dtstamp}`,
+    `DTSTART:${dtstart}`,
+    `DTEND:${dtend}`,
+    `SUMMARY:${escICSText(EVENT.title)}`,
+    `DESCRIPTION:${escICSText(EVENT.description)}\\n\\nLocation: ${escICSText(EVENT.locationText)}`,
+    `LOCATION:${escICSText(EVENT.locationText)}`,
+    "BEGIN:VALARM",
+    "TRIGGER:" + alarm,
+    "ACTION:DISPLAY",
+    "DESCRIPTION:Reminder",
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR"
+  ];
+  return ics.join("\r\n");
+}
+function downloadICS(){
+  const blob = new Blob([buildICS()], {type:'text/calendar;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${EVENT.title.replace(/\s+/g,'_')}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function openGoogleCalendar(){
+  const s = new Date(EVENT.startLocalISO);
+  const e = new Date(s.getTime() + EVENT.durationMinutes*60000);
+  const sUTC = formatUTC(s);
+  const eUTC = formatUTC(e);
+  const title = encodeURIComponent(EVENT.title);
+  const details = encodeURIComponent(EVENT.description + '\n\nLocation: ' + EVENT.locationText);
+  const location = encodeURIComponent(EVENT.locationText);
+  window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${sUTC}/${eUTC}&details=${details}&location=${location}&sf=true&output=xml`, '_blank');
+}
+document.getElementById('addCalendar').addEventListener('click', ()=>{
+  // Simple choice: OK = download .ics, Cancel = google calendar
+  const ok = confirm("Save this event to your phone/calendar?\n\nOK = Download .ics (recommended)\nCancel = Open Google Calendar (web)");
+  if(ok){ downloadICS(); setTimeout(()=>alert('Calendar file downloaded. Open it to add the event (8-hour reminder included).'),700); }
+  else openGoogleCalendar();
+});
+
+/* load small decorative behavior (balloon random drift) */
+(function driftBalloons(){
+  const bs = document.querySelectorAll('.balloon');
+  bs.forEach((b,idx)=>{
+    const dur = 4.5 + Math.random()*3;
+    b.style.animation = `bob ${dur}s ${0.4*idx}s ease-in-out infinite`;
   });
-  (function unlock(){
-    const once = async ()=>{ try{ await bgAudio.play(); bgAudio.pause(); }catch{}; document.removeEventListener('click',once); }
-    document.addEventListener('click', once, {passive:true});
-  })();
-
-  // -------------------- map open --------------------
-  document.getElementById('mapBtn').addEventListener('click', (e)=>{
-    e.preventDefault();
-    // Change to your event's Google Maps share URL if needed
-    window.open('https://maps.app.goo.gl/WLU1ynjK8tgKdrZX9', '_blank');
-  });
-  document.getElementById('openMap').addEventListener('click', (e)=>{
-    e.preventDefault();
-    window.open('https://maps.app.goo.gl/WLU1ynjK8tgKdrZX9', '_blank');
-  });
-
-  // -------------------- countdown --------------------
-  (function countdown(){
-    const el = document.getElementById('countdown');
-    const target = new Date('2025-10-10T18:00:00+05:30').getTime(); // EDIT if required
-    function tick(){
-      const now = Date.now();
-      let d = Math.max(0, target - now);
-      if(d<=0){ el.textContent = "🎉 The celebration begins!"; return; }
-      const days = Math.floor(d / 86400000);
-      const hours = Math.floor(d % 86400000 / 3600000);
-      const mins = Math.floor(d % 3600000 / 60000);
-      const secs = Math.floor(d % 60000 / 1000);
-      el.textContent = `${days}d ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}`;
-    }
-    tick(); setInterval(tick, 1000);
-  })();
-
-  // -------------------- calendar / .ics generator --------------------
-  // Helper: format UTC YYYYMMDDTHHMMSSZ
-  function formatICSDate(d){
-    const pad = n => String(n).padStart(2,'0');
-    const y = d.getUTCFullYear();
-    const m = pad(d.getUTCMonth()+1);
-    const day = pad(d.getUTCDate());
-    const hh = pad(d.getUTCHours());
-    const mm = pad(d.getUTCMinutes());
-    const ss = pad(d.getUTCSeconds());
-    return `${y}${m}${day}T${hh}${mm}${ss}Z`;
-  }
-  function uid(){ return 'evt-' + Date.now() + '-' + Math.floor(Math.random()*100000); }
-  // Edit these values for your event (keep timezone offset in startLocalISO)
-  const eventTitle = "Ayansh — 1st Birthday";
-  const description = "With great joy, Harshal & Kavita Bhalerao invite you to celebrate the first birthday of our son, Ayansh. Cake, games and family time.";
-  const locationText = "MIG Cricket Club, Bandra, Mumbai";
-  const startLocalISO = "2025-10-10T18:00:00+05:30"; // local time with offset
-  const durationMinutes = 180; // event duration (minutes)
-
-  function escICSText(s){
-    return s.replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/,/g,'\\,');
-  }
-
-  function buildICS(){
-    const startLocal = new Date(startLocalISO);
-    const endLocal = new Date(startLocal.getTime() + durationMinutes * 60000);
-    const dtstamp = formatICSDate(new Date());
-    const dtstart = formatICSDate(startLocal);
-    const dtend = formatICSDate(endLocal);
-    const myUid = uid();
-    const alarmTrigger = "-PT8H"; // 8 hours before
-    const icsLines = [
-      "BEGIN:VCALENDAR",
-      "PRODID:-//Ayansh Birthday//EN",
-      "VERSION:2.0",
-      "CALSCALE:GREGORIAN",
-      "METHOD:REQUEST",
-      "BEGIN:VEVENT",
-      `UID:${myUid}`,
-      `DTSTAMP:${dtstamp}`,
-      `DTSTART:${dtstart}`,
-      `DTEND:${dtend}`,
-      `SUMMARY:${escICSText(eventTitle)}`,
-      `DESCRIPTION:${escICSText(description)}\\n\\nLocation: ${escICSText(locationText)}`,
-      `LOCATION:${escICSText(locationText)}`,
-      "BEGIN:VALARM",
-      "TRIGGER:" + alarmTrigger,
-      "ACTION:DISPLAY",
-      "DESCRIPTION:Reminder",
-      "END:VALARM",
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ];
-    return icsLines.join("\r\n");
-  }
-
-  function downloadICSFile(){
-    const ics = buildICS();
-    const blob = new Blob([ics], {type: 'text/calendar;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'Ayansh-1st-Birthday.ics';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=> URL.revokeObjectURL(url), 1500);
-  }
-
-  function openGoogleCalendar(){
-    const start = new Date(startLocalISO);
-    const end = new Date(start.getTime() + durationMinutes * 60000);
-    const gStart = formatICSDate(start);
-    const gEnd = formatICSDate(end);
-    const details = encodeURIComponent(description + "\n\nLocation: " + locationText);
-    const title = encodeURIComponent(eventTitle);
-    const location = encodeURIComponent(locationText);
-    const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${gStart}/${gEnd}&details=${details}&location=${location}&sf=true&output=xml`;
-    window.open(url, '_blank');
-  }
-
-  // Wire button UI
-  document.addEventListener('DOMContentLoaded', ()=>{
-    const addBtn = document.getElementById('addCalendar');
-    if(!addBtn) return;
-    addBtn.addEventListener('click', ()=>{
-      // Simple choice dialog: OK = ICS download, Cancel = Google Calendar
-      const useICS = confirm("Save event to your phone's calendar?\n\nOK = Download .ics (recommended)\nCancel = Open Google Calendar (web)");
-      if(useICS){
-        downloadICSFile();
-        setTimeout(()=> alert("Downloaded calendar file. Open it to add the event. The event includes an 8-hour prior reminder (subject to your calendar app)."), 600);
-      } else {
-        openGoogleCalendar();
-      }
-    });
-  });
+})();
 </script>
 </body>
 </html>
